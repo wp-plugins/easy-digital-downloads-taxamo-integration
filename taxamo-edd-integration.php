@@ -3,7 +3,7 @@
  * Plugin Name:     Easy Digital Downloads - Taxamo Integration
  * Plugin URI:      http://winwar.co.uk/plugins/easy-digital-downloads-taxamo-integration/
  * Description:     Integrate Taxamo into Easy Digital Downloads. Make yourself Compatible with the VATMOSS EU Legislation
- * Version:         1.0.1
+ * Version:         1.0.2
  * Author:          Winwar Media
  * Author URI:      http://winwar.co.uk
  * Text Domain:     taxamo-edd-integration
@@ -466,7 +466,7 @@ return array_merge( $settings, $new_settings );
             if ( isset( $_POST['edd_self_declaration'] ) ) {
 
                 $payment_meta['self_declaration'] = $_POST['edd_self_declaration'];
-            
+
             }
 
             return $payment_meta;
@@ -536,11 +536,11 @@ return array_merge( $settings, $new_settings );
             if ( isset($purchase_data['post_data']['edd_self_declaration']) ) {
 
                 if ($purchase_data['post_data']['edd_self_declaration']) {
-                
+
                     $purchase_data['price'] = $purchase_data['price'] - $purchase_data['tax'];
                     $purchase_data['tax'] = self::calculate_tax( $purchase_data['user_info']['address']['country'] );
                     $purchase_data['price'] = $purchase_data['price'] + $purchase_data['tax'];
-                
+
                 }
             }
             
@@ -735,15 +735,18 @@ return array_merge( $settings, $new_settings );
                     $customid = "";
                     $transaction->force_country_code = $countrycode;
 
-                    foreach ( $cart_items as $cart_item ) {
+                    if ( !empty( $cart_items ) ) {  
+                        foreach ( $cart_items as $cart_item ) {
 
-                        $customid++;
-                        $transaction_line = new Input_transaction_line();
-                        $transaction_line->amount = $cart_item['item_price'];
-                        $transaction_line->custom_id = $cart_item['name'] . $customid;
-                        array_push( $transactionarray, $transaction_line );
+                            $customid++;
+                            $transaction_line = new Input_transaction_line();
+                            $transaction_line->amount = $cart_item['item_price'];
+                            $transaction_line->custom_id = $cart_item['name'] . $customid;
+                            array_push( $transactionarray, $transaction_line );
 
+                        }
                     }
+
                     $transaction->transaction_lines = $transactionarray;
 
                     $resp = $taxtaxamo->calculateTax( array( 'transaction' => $transaction ) );
