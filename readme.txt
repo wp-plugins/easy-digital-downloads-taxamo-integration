@@ -19,6 +19,13 @@ This plugin has **no free support**. As such, no support will be given on the 
 
 [**Sign up For Support Here**](http://winwar.co.uk/priority-support/?level=3)
 
+= Translation Credits =
+The plugin has been translated to the following languages.
+
+* Finnish - [Sami Keijonen](https://foxland.fi/) [@samikeijonen](https://twitter.com/samikeijonen)
+
+To contribute a translation, please contact me!
+
 = About Winwar Media =
 This plugin is made by [**Winwar Media**](http://winwar.co.uk/), a WordPress Development and Training Agency in Manchester, UK.
 
@@ -39,6 +46,17 @@ Why don't you?
 
 
 == Changelog ==
+
+= 1.1 =
+* Code Cleanup - removed a lot of redundant files
+* Added Finnish Translation
+* Removed Updater Files
+* Fire Script.js only on checkout page.
+* Added ABSPATH check.
+
+A big thank you to [Foxland](https://foxland.fi/) and [@samikeijonen](https://twitter.com/samikeijonen) for his work on this update!
+
+* Time Taken - 1 1/2 hours+ *
 
 = 1.0.2 =
 * Remove warning on sitewide carts if cart is empty.
