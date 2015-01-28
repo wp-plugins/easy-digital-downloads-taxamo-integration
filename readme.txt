@@ -1,7 +1,7 @@
 === Easy Digital Downloads - Taxamo Integration ===
 Contributors: rhyswynne
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VBQ4NPY2XX5KN
-Tags: easy digital downloads, edd, taxamo, vatmoss, tax, vat, eu
+Tags: easy digital downloads, edd, taxamo, vatmoss, tax, vat, eu, translate-me
 Requires at least: 3.9.2
 Tested up to: 4.1
 Stable tag: trunk
@@ -23,8 +23,9 @@ This plugin has **no free support**. As such, no support will be given on the 
 The plugin has been translated to the following languages.
 
 * Finnish - [Sami Keijonen](https://foxland.fi/) [@samikeijonen](https://twitter.com/samikeijonen)
+* French - [Fx Bénard](http://fxbenard.com/) [@fxbenard](https://twitter.com/fxbenard)
 
-To contribute a translation, please contact me!
+To contribute a translation, you can do so by [checking out the project on Transiflex](https://www.transifex.com/projects/p/easy-digital-downloads-taxamo-integration/)
 
 = About Winwar Media =
 This plugin is made by [**Winwar Media**](http://winwar.co.uk/), a WordPress Development and Training Agency in Manchester, UK.
@@ -46,6 +47,16 @@ Why don't you?
 
 
 == Changelog ==
+
+= 1.2 =
+* Returns correct tax rate should discount codes be used.
+* Transactions that are free downloads are not submitted to Taxamo
+* Should the self-confirmation box not be displayed (such as for a free transaction), then it is not checked.
+* Added French Translation
+
+Thanks to [Eric Daams](http://164a.com/) & [Fx Bénard](http://fxbenard.com/) for his work on this update!
+
+* Time Taken - 1 hour+ *
 
 = 1.1 =
 * Code Cleanup - removed a lot of redundant files

@@ -1,6 +1,6 @@
 Easy Digital Downloads - Taxamo Integration
 ===========================================
-Contributors: rhyswynne
+Maintainer: [rhyswynne](http://github.com/rhyswynne)
 
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VBQ4NPY2XX5KN
 
@@ -30,6 +30,11 @@ Installation
 
 Credits
 =======
+1.2
+---
+* Thanks to [Eric Daams](http://164a.com/) for his work on this update surrounding free transactions!
+* Thanks to [Fx Bénard](http://fxbenard.com/) for the French translation.
+
 1.1
 ---
 * Thanks to [Sami Keijonen](https://github.com/samikeijonen) from [Foxland](https://foxland.fi/) for a lot of work on 1.1, as well as a Finnish Translation.
