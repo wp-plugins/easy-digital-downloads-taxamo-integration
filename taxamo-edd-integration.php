@@ -3,7 +3,7 @@
  * Plugin Name:     Easy Digital Downloads - Taxamo Integration
  * Plugin URI:      http://winwar.co.uk/plugins/easy-digital-downloads-taxamo-integration/
  * Description:     Integrate Taxamo into Easy Digital Downloads. Make yourself Compatible with the VATMOSS EU Legislation
- * Version:         1.3.1
+ * Version:         1.4
  * Author:          Winwar Media
  * Author URI:      http://winwar.co.uk
  * Text Domain:     taxamo-edd-integration
@@ -13,6 +13,22 @@
  * @copyright       Copyright (c) 2014 Winwar Media
  *
  */
+
+/*
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
 
 // Exit if accessed directly
 if ( !defined( 'ABSPATH' ) ) exit;
@@ -121,7 +137,7 @@ if ( !class_exists( 'EDD_Taxamo_EDD_Integration' ) ) {
             // EDD Hooks
             add_filter( 'edd_settings_taxes', array( $this, 'settings' ), 1 );
 
-            add_filter( 'edd_get_cart_tax', array( $this, 'calculate_tax_filter' ) );
+            add_filter( 'edd_get_cart_tax', array( $this, 'calculate_tax_filter' ), 10, 1 );
             add_action( 'edd_cc_billing_top', array( $this, 'include_introduction_paragraph' ) );
             add_action( 'edd_cc_billing_bottom', array( $this, 'include_confirmation_checkbox' ), 15, 2 );
 
@@ -129,7 +145,7 @@ if ( !class_exists( 'EDD_Taxamo_EDD_Integration' ) ) {
 
             add_filter( 'edd_checkout_error_checks', array( $this, 'check_self_declaration' ), 10, 2 );
             add_filter( 'edd_payment_meta', array( $this, 'store_eu_data' ) );
-            add_action( 'edd_purchase_data_before_gateway', array( $this, 'modify_tax' ), 10, 2 );
+            add_action( 'edd_purchase_data_before_gateway', array( $this, 'modify_tax' ), 999999, 2 );
             add_action( 'edd_complete_purchase', array( $this, 'submit_order_to_taxamo' ) );
 
             add_action( 'edd_update_payment_status', array( $this, 'submit_refund_to_taxamo' ), 200, 3 );
@@ -380,6 +396,7 @@ return array_merge( $settings, $new_settings );
 
                 if ( isset( $edd_options['taxedd_private_token'] ) ) {
 
+                    $vatnumber = $data['vat_number'];
                     $resp = taxedd_get_vat_details( $vatnumber );
 
                     if ( 1 != $resp['buyer_tax_number_valid'] ) {
@@ -462,7 +479,7 @@ return array_merge( $settings, $new_settings );
             // Set self declaration flag if needed.
             if ( isset( $_POST['edd_self_declaration'] ) ) {
 
-                $payment_meta['self_declaration'] = $_POST['edd_self_declaration'];
+                $payment_meta['self_declaration'] = esc_attr( $_POST['edd_self_declaration'] );
 
             }
 
@@ -501,10 +518,11 @@ return array_merge( $settings, $new_settings );
         public function modify_tax( $purchase_data, $valid_data ) {
             global $edd_options;
 
+            $alreadyvatchecked = FALSE;
+
             // Check if we have a Valid VAT number, if so, remove the tax.
             if ( isset( $purchase_data['post_data']['vat_number'] ) && !empty( $purchase_data['post_data']['vat_number'] ) && "" !== $purchase_data['post_data']['vat_number'] &&
                 $purchase_data['post_data']['edd_vatreg'] ) {
-
                 $vatarray = taxedd_get_vat_details( $purchase_data['post_data']['vat_number'] );
 
             if ( isset( $vatarray['billing_country_code'] ) ) {
@@ -515,21 +533,30 @@ return array_merge( $settings, $new_settings );
 
                 // Check if Base Country matches Billing Country, if not, remove the VAT
             if ( $edd_options['base_country'] !== $billingcc ) {
+
+                $old_data = $purchase_data;
+
                 $purchase_data['price'] = $purchase_data['price'] - $purchase_data['tax'];
                 $purchase_data['tax'] = 0;
                 $purchase_data['vat_billing_country_code'] = $billingcc;
 
+                $alreadyvatchecked = TRUE;
+
+
             } else {
 
-                    // Just double check tax again, with the new Billing Country Code
+                // Just double check tax again, with the new Billing Country Code
                 $purchase_data['price'] = $purchase_data['price'] - $purchase_data['tax'];
                 $purchase_data['tax'] = $this->calculate_tax( $billingcc );
                 $purchase_data['price'] = $purchase_data['price'] + $purchase_data['tax'];
+
+                $alreadyvatchecked = TRUE;
+
             }
         }
 
-            // If there's a self declaration flag, recalculate tax.
-        if ( isset( $purchase_data['post_data']['edd_self_declaration'] ) ) {
+            // If there's a self declaration flag AND there isn't a , recalculate tax.
+        if ( isset( $purchase_data['post_data']['edd_self_declaration'] ) && !$alreadyvatchecked ) {
 
             if ( $purchase_data['post_data']['edd_self_declaration'] ) {
 
@@ -707,11 +734,18 @@ return array_merge( $settings, $new_settings );
          *
          * @return void
          */
-        public function calculate_tax_filter() {
+        public function calculate_tax_filter( $carttax ) {
             global $edd_options;
 
             if ( isset( $edd_options['taxedd_private_token'] ) ) {
-                return $this->get_api_response_calculate_tax();
+
+                $tax = $this->get_api_response_calculate_tax();
+
+                if ( $tax != 0 ) {
+                    return $tax;
+                } else {
+                    return $carttax;
+                }
             }
         }
 
@@ -726,7 +760,14 @@ return array_merge( $settings, $new_settings );
             global $edd_options;
 
             if ( isset( $edd_options['taxedd_private_token'] ) ) {
-                return $this->get_api_response_calculate_tax( $countrycode );
+                $tax = $this->get_api_response_calculate_tax( $countrycode );
+
+                if ( $tax != 0 || $this->check_if_eu( $countrycode ) ) {
+                    return $tax;
+                } else {
+                    return edd_get_cart_tax();
+                }
+
             }
         }
 
@@ -931,6 +972,54 @@ return array_merge( $settings, $new_settings );
                     return $this->api_responses[ $type ][ $id ];
                 }
             }
+        }
+
+
+        /**
+         * Check if the country is in the EU
+         * @param  string countrycode   the country code is present
+         * @return bool                 see if the country code is in the EU
+         */
+        public function check_if_eu( $countrycode = "" ) {
+            $countries = array(
+                'AT',
+                'BE',
+                'BG',
+                'CY',
+                'CZ',
+                'DE',
+                'DK',
+                'EE',
+                'EL',
+                'ES',
+                'FI',
+                'FR',
+                'GB',
+                'GR',
+                'HR',
+                'HU',
+                'IE',
+                'IT',
+                'LT',
+                'LU',
+                'LV',
+                'MT',
+                'NL',
+                'PL',
+                'PT',
+                'RO',
+                'SE',
+                'SI',
+                'SK',
+                );
+
+            foreach ( $countries as $country ) {
+                if ( $country == $countrycode ) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 

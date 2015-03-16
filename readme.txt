@@ -48,6 +48,14 @@ Why don't you?
 
 == Changelog ==
 
+= 1.4 =
+* Allows tax to fall back should Taxamo returns zero. Useful for non EU companies using the system if they have alternate tax defined.
+* Tested with Easy Digital Downloads 2.3.
+* Fixed a VAT error occurred when a user was - for example - buying from a UK shop, with a German VAT number, who is located in France.
+* Impoved Validnation checks on VAT number.
+
+*Time Taken - 2 hours*
+
 = 1.3.1 =
 * Uses the EDD Customer IP rather than the IP, stops wrong information being recorded with some orders.
 
