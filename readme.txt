@@ -17,7 +17,8 @@ In January 2015 EU Legislation required you to record the selling location of al
 
 More details are available on the official [Easy Digital Downloads - Taxamo Integration](https://winwar.co.uk/plugins/easy-digital-downloads-taxamo-integration/?utm_source=wordpress.org&utm_medium=readmetext&utm_campaign=eddtaxamointegration) page at Winwar Media's site.
 
-> <strong>Support</strong><br/>
+> <strong>Support</strong>
+
 > This plugin has **no free support**. As such, no support will be given on the WordPress.org forums. First off, [please read the documentation of this project](https://winwar.co.uk/documentation/easy-digital-downloads-taxamo-integration/?utm_source=wordpress.org&utm_medium=readmetext&utm_campaign=eddtaxamointegration), and should you need it, support is handled by [Priority Support](http://winwar.co.uk/priority-support/?level=3&utm_source=wordpress.org&utm_medium=readmetext&utm_campaign=eddtaxamointegration) section. If you believe you have a bug, rather than a support request, please submit a bug to the Github issue tracker, or [contact me](http://winwar.co.uk/contact-us/?utm_source=wordpress.org&utm_medium=readmetext&utm_campaign=eddtaxamointegration) directly.
 
 > [**Sign up For Support Here**](http://winwar.co.uk/priority-support/?level=3&utm_source=wordpress.org&utm_medium=readmetext&utm_campaign=eddtaxamointegration)
